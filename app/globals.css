@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -24,4 +25,19 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+*/
+
+/* Do an horizontal flip when you move the mouse over the flip box container */
+.flip-card-now .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.transform-rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.backface-visibility-hidden {
+  -webkit-backface-visibility: hidden; /* Safari */
+  backface-visibility: hidden;
 }
