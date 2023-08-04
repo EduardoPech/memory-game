@@ -10,6 +10,7 @@ import {
   Image,
   ImageMemory,
 } from "../interfaces/image";
+import Win from "../components/Win";
 
 const STATUS = {
   LOADING: "loading",
@@ -66,7 +67,7 @@ export default function Game() {
       fetchData();
       // Start game
       setTimeout(() => {
-        setStatus(STATUS.PLAYING);
+        setStatus(STATUS.FINISHED);
       }, 1000);
     } catch (error) {}
   }, []);
@@ -160,14 +161,7 @@ export default function Game() {
             return <FlipCard key={image.key} image={image} flip={handleFlip} />;
           })}
       </div>
-      {status === STATUS.FINISHED && (
-        <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="text-lg font-bold">Ganaste</h3>
-            <p className="py-4">Eres a todo dar!</p>
-          </div>
-        </div>
-      )}
+      {status === STATUS.FINISHED && <Win />}
     </div>
   );
 }
