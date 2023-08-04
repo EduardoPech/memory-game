@@ -41,3 +41,9 @@ body {
   -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
 }
+
+.user-drag-none {
+  user-drag: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}

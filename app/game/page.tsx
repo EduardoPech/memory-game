@@ -3,6 +3,13 @@
 import FlipCard from "../components/FlipCard";
 import { getData } from "../api/images";
 import { useEffect, useState } from "react";
+import {
+  ListImages,
+  Fields,
+  ImageAPI,
+  Image,
+  ImageMemory,
+} from "../interfaces/image";
 
 const STATUS = {
   LOADING: "loading",
@@ -11,21 +18,20 @@ const STATUS = {
 };
 
 export default function Game() {
-  const [images, setImages] = useState([]);
-  const [backupImages, setBackupImages] = useState([]);
+  const [images, setImages] = useState<ImageMemory[]>([]);
+  const [backupImages, setBackupImages] = useState<ImageMemory[]>([]);
   const [imagesFlipped, setImagesFlipped]: any = useState([]);
   const [imagesMatched, setImagesMatched]: any = useState([]);
   const [hits, setHits] = useState(0);
   const [errors, setErrors] = useState(0);
-  const [isFinish, setIsFinish] = useState(false);
   const [status, setStatus] = useState(STATUS.LOADING);
 
-  const formatData = (listImages: any) => {
-    const images = listImages.entries.map((item: any) => {
+  const formatData = (listImages: ListImages): Image[] => {
+    const images = listImages.entries.map(({ fields: { image } }: Fields) => {
       return {
-        id: item.fields.image.uuid,
-        title: item.fields.image.title,
-        url: item.fields.image.url,
+        id: image.uuid,
+        title: image.title,
+        url: image.url,
         isFlipped: false,
         isMatched: false,
       };
@@ -34,17 +40,18 @@ export default function Game() {
     return images;
   };
 
-  const duplicateImages = (images: any) => {
-    return images.reduce((acc: any, image: any) => {
+  // TODO: Remove any type
+  const duplicateImages = (images: Image[]): ImageMemory[] => {
+    return images.reduce((acc: any, image: Image): ImageMemory[] => {
       return [
         ...acc,
-        { ...image, key: image.id + "a" },
-        { ...image, key: image.id + "b" },
+        { ...image, key: `${image.id}a` },
+        { ...image, key: `${image.id}b` },
       ];
     }, []);
   };
 
-  const shuffleImages = (images: any) => {
+  const shuffleImages = (images: ImageMemory[]): ImageMemory[] => {
     return images.sort(() => Math.random() - 0.5);
   };
 
@@ -55,19 +62,30 @@ export default function Game() {
         const data = await getData();
         setImages(shuffleImages(duplicateImages(formatData(data))));
       };
+      // Get data
       fetchData();
       // Start game
-      setStatus(STATUS.PLAYING);
+      setTimeout(() => {
+        setStatus(STATUS.PLAYING);
+      }, 1000);
     } catch (error) {}
   }, []);
 
-  const updateListImages = (listImages: any, key: string) => {
-    return listImages.map((image: any) => {
+  const updateListImages = (listImages: ImageMemory[], key: string) => {
+    return listImages.map((image: ImageMemory) => {
       if (image.key === key) {
-        return { ...image, isFlipped: !image.isFlipped };
+        return { ...image, isFlipped: true };
       }
       return image;
     });
+  };
+
+  const handleFlip = (image: ImageMemory) => {
+    if (imagesFlipped.length === 0) {
+      setBackupImages(images);
+    }
+    setImagesFlipped([...imagesFlipped, image]);
+    setImages(updateListImages(images, image.key));
   };
 
   const blockListImages = (listImages: any, id: string) => {
@@ -77,14 +95,6 @@ export default function Game() {
       }
       return image;
     });
-  };
-
-  const handleFlip = (image: any) => {
-    if (imagesFlipped.length === 0) {
-      // setBackupImages(images);
-    }
-    setImagesFlipped([...imagesFlipped, image]);
-    setImages(updateListImages(images, image.key));
   };
 
   useEffect(() => {
@@ -98,29 +108,23 @@ export default function Game() {
       } else {
         setErrors(errors + 1);
         setImagesFlipped([]);
-        // setTimeout(() => {
-        //   setImages(backupImages);
-        // }, 1000);
+        setTimeout(() => {
+          setImages(backupImages);
+        }, 1000);
       }
     }
   }, [imagesFlipped, errors, hits, imagesMatched, images, backupImages]);
 
   // Check if the game is finished
   useEffect(() => {
-    if (
-      status === STATUS.PLAYING &&
-      imagesMatched.length === images.length / 2
-    ) {
-      setIsFinish(true);
+    if (status === STATUS.PLAYING && imagesMatched.length > 0) {
+      if (imagesMatched.length === images.length / 2) {
+        setTimeout(() => {
+          setStatus(STATUS.FINISHED);
+        }, 1000);
+      }
     }
   }, [imagesMatched, images, status]);
-
-  // Generate cards
-  const Cards = () => {
-    return images.map((image: any) => {
-      return <FlipCard key={image.key} image={image} flip={handleFlip} />;
-    });
-  };
 
   // Generate skeleton loaders
   const SkeletonLoaders = () => {
@@ -151,8 +155,19 @@ export default function Game() {
       </div>
       <div className="grid grid-cols-6 gap-x-8 gap-y-8 container mx-auto py-10">
         {status === STATUS.LOADING && <SkeletonLoaders />}
-        {status === STATUS.PLAYING && <Cards />}
+        {status === STATUS.PLAYING &&
+          images.map((image: any) => {
+            return <FlipCard key={image.key} image={image} flip={handleFlip} />;
+          })}
       </div>
+      {status === STATUS.FINISHED && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="text-lg font-bold">Ganaste</h3>
+            <p className="py-4">Eres a todo dar!</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

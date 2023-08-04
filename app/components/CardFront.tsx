@@ -9,6 +9,7 @@ export default function CardFront({ url }: { url: string }) {
         fill={true}
         style={{ objectFit: "cover" }}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        className="user-drag-none"
       />
     </div>
   );
