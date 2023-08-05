@@ -5,7 +5,7 @@ export default function CardBack() {
   return (
     <div className="h-full w-full bg-yellow-400">
       <Image
-        src={url}
+        src={`/nextjs-github-pages/${url}`}
         alt="Spiderman"
         fill={true}
         style={{ objectFit: "cover" }}

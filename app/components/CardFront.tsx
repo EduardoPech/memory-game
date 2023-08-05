@@ -4,7 +4,7 @@ export default function CardFront({ url }: { url: string }) {
   return (
     <div className="rounded-md relative h-full w-full">
       <Image
-        src={url}
+        src={`/nextjs-github-pages/${url}`}
         alt="Spiderman"
         fill={true}
         style={{ objectFit: "cover" }}
