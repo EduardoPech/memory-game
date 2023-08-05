@@ -1,11 +1,17 @@
 import Image from "next/image";
 
-export default function CardFront({ url }: { url: string }) {
+export default function CardFront({
+  url,
+  description,
+}: {
+  url: string;
+  description: string;
+}) {
   return (
     <div className="rounded-md relative h-full w-full">
       <Image
-        src={`/nextjs-github-pages/${url}`}
-        alt="Spiderman"
+        src={url}
+        alt={description}
         fill={true}
         style={{ objectFit: "cover" }}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
