@@ -17,7 +17,6 @@ export default function FlipCard({
   const handleFlip = () => {
     if (image.isMatched) return;
     if (!image.isMatched && isFlipped) return;
-    setIsFlipped(true);
     flip(image);
   };
 
@@ -29,7 +28,7 @@ export default function FlipCard({
 
   return (
     <div
-      className={`perspective-1000 bg-transparent w-52 h-52 cursor-pointer hover:scale-110 transition-all duration-500 ease-in-out
+      className={`perspective-1000 bg-transparent w-36 h-36 md:w-52 md:h-52 cursor-pointer hover:scale-110 transition-all duration-500 ease-in-out
        ${isFlipped && "flip-card-now"}`}
       onClick={handleFlip}
     >

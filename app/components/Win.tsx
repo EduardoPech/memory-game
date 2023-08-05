@@ -2,7 +2,7 @@ import ImageWin from "../assets/images/win.png";
 import Image from "next/image";
 import Confetti from "./Confetti";
 
-export default function Win({}) {
+export default function Win({ resetGame }: any) {
   return (
     <div className="flex flex-col justify-center items-center">
       <Confetti />
@@ -14,7 +14,10 @@ export default function Win({}) {
         height={500}
         className="user-drag-none"
       />
-      <p className="text-3xl text-white">You win the game</p>
+      <p className="text-3xl text-white my-5">You win the game</p>
+      <button className="btn btn-primary" onClick={resetGame}>
+        Play Again
+      </button>
     </div>
   );
 }

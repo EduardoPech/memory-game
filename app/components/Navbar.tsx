@@ -18,7 +18,7 @@ export default function Navbar() {
       <div className="navbar-center">
         <h1 className="text-xl">Memory Game</h1>
       </div>
-      <div className="navbar-end">
+      <div className="navbar-end px-5 md:px-10">
         <span>
           <strong>{name}</strong>
         </span>

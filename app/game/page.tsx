@@ -11,6 +11,7 @@ import {
   ImageMemory,
 } from "../interfaces/image";
 import Win from "../components/Win";
+import Score from "../components/Score";
 
 const STATUS = {
   LOADING: "loading",
@@ -26,6 +27,7 @@ export default function Game() {
   const [hits, setHits] = useState(0);
   const [errors, setErrors] = useState(0);
   const [status, setStatus] = useState(STATUS.LOADING);
+  const [isBlock, setIsBlock] = useState(false);
 
   const formatData = (listImages: ListImages): Image[] => {
     const images = listImages.entries.map(({ fields: { image } }: Fields) => {
@@ -67,7 +69,7 @@ export default function Game() {
       fetchData();
       // Start game
       setTimeout(() => {
-        setStatus(STATUS.FINISHED);
+        setStatus(STATUS.PLAYING);
       }, 1000);
     } catch (error) {}
   }, []);
@@ -82,11 +84,14 @@ export default function Game() {
   };
 
   const handleFlip = (image: ImageMemory) => {
-    if (imagesFlipped.length === 0) {
-      setBackupImages(images);
+    console.log("handleFlip", imagesFlipped.length);
+    if (imagesFlipped.length < 2) {
+      if (imagesFlipped.length === 0) {
+        setBackupImages(images);
+      }
+      setImagesFlipped([...imagesFlipped, image]);
+      setImages(updateListImages(images, image.key));
     }
-    setImagesFlipped([...imagesFlipped, image]);
-    setImages(updateListImages(images, image.key));
   };
 
   const blockListImages = (listImages: any, id: string) => {
@@ -100,17 +105,20 @@ export default function Game() {
 
   useEffect(() => {
     if (imagesFlipped.length === 2) {
+      setIsBlock(true);
       const [firstImage, secondImage] = imagesFlipped;
       if (firstImage.id === secondImage.id) {
         setImagesMatched([...imagesMatched, firstImage]);
         setImages(blockListImages(images, firstImage.id));
         setHits(hits + 1);
         setImagesFlipped([]);
+        setIsBlock(false);
       } else {
-        setErrors(errors + 1);
-        setImagesFlipped([]);
         setTimeout(() => {
           setImages(backupImages);
+          setIsBlock(false);
+          setImagesFlipped([]);
+          setErrors(errors + 1);
         }, 1000);
       }
     }
@@ -126,6 +134,18 @@ export default function Game() {
       }
     }
   }, [imagesMatched, images, status]);
+
+  const resetGame = () => {
+    setStatus(STATUS.LOADING);
+    setImagesFlipped([]);
+    setImagesMatched([]);
+    setHits(0);
+    setErrors(0);
+    setBackupImages([]);
+    setTimeout(() => {
+      setStatus(STATUS.PLAYING);
+    }, 1000);
+  };
 
   // Generate skeleton loaders
   const SkeletonLoaders = () => {
@@ -143,25 +163,16 @@ export default function Game() {
   };
 
   return (
-    <div className="h-screen">
-      <div className="flex justify-center gap-5 mt-10">
-        <button className="btn">
-          Hits
-          <div className="badge badge-success">{hits}</div>
-        </button>
-        <button className="btn">
-          Errors
-          <div className="badge badge-error">{errors}</div>
-        </button>
-      </div>
-      <div className="grid grid-cols-6 gap-x-8 gap-y-8 container mx-auto py-10">
+    <div className="h-[calc(100vh-84px)]">
+      <Score hits={hits} errors={errors} />
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 md:gap-x-8  gap-y-4 md:gap-y-8 container mx-auto justify-items-center">
         {status === STATUS.LOADING && <SkeletonLoaders />}
         {status === STATUS.PLAYING &&
           images.map((image: any) => {
             return <FlipCard key={image.key} image={image} flip={handleFlip} />;
           })}
       </div>
-      {status === STATUS.FINISHED && <Win />}
+      {status === STATUS.FINISHED && <Win resetGame={resetGame} />}
     </div>
   );
 }
