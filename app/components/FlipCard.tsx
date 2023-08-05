@@ -37,7 +37,7 @@ export default function FlipCard({
           <CardBack />
         </div>
         <div className="transform-rotate-y-180 backface-visibility-hidden absolute w-full h-full">
-          <CardFront url={image.url} description={image.description} />
+          <CardFront url={image.url} />
         </div>
       </div>
     </div>
