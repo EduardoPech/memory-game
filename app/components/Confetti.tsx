@@ -19,8 +19,6 @@ export default function Confetti() {
       });
   }, []);
 
-  useEffect(() => fire(), []);
-
   const fire = useCallback(() => {
     makeShot(0.25, {
       spread: 26,
@@ -49,6 +47,8 @@ export default function Confetti() {
       startVelocity: 45,
     });
   }, [makeShot]);
+
+  useEffect(() => fire(), [fire]);
 
   return (
     <ReactCanvasConfetti
