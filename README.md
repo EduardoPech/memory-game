@@ -23,7 +23,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ✅ Functions game \
 ✅ Animations for cards \
 ✅ Win Page \
-✅ Reset game
+✅ Reset game \
 ❌ Tests(pending)
 
 ## Deploy on Github Pages
