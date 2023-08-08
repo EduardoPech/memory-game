@@ -1,7 +1,5 @@
 async function getData() {
-  const res = await fetch(
-    "https://fed-team.modyo.cloud/api/content/spaces/animals/types/game/entries?per_page=9"
-  );
+  const res = await fetch(process.env.NEXT_PUBLIC_API_IMAGES || "");
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");

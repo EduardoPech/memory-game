@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
-  basePath: "/memory-game",
+  basePath: process.env.BASE_PATH || "",
   images: {
     remotePatterns: [
       {
