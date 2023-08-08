@@ -24,6 +24,14 @@ export default function Game() {
   const [hits, setHits] = useState(0);
   const [errors, setErrors] = useState(0);
   const [status, setStatus] = useState(STATUS.LOADING);
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    const name = localStorage.getItem("name");
+    if (name) {
+      setName(name);
+    }
+  }, []);
 
   useEffect(() => {
     try {
@@ -102,7 +110,7 @@ export default function Game() {
             return <FlipCard key={image.key} image={image} flip={handleFlip} />;
           })}
       </div>
-      {status === STATUS.FINISHED && <Win resetGame={resetGame} />}
+      {status === STATUS.FINISHED && <Win resetGame={resetGame} name={name} />}
     </div>
   );
 }
